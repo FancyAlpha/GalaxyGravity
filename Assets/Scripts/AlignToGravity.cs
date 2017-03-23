@@ -1,13 +1,23 @@
 ﻿using UnityEngine;
 
 public class AlignToGravity : MonoBehaviour {
-    RaycastHit hit1;
+    public Transform followCam;
+    RaycastHit hit;
 
-    void Update () {
-        Physics.Raycast(transform.position , -transform.up , out hit1);
-        transform.rotation = Quaternion.FromToRotation(transform.up , hit1.normal) * transform.rotation;
+    void FixedUpdate () {
+        Physics.Raycast(transform.position , -transform.up , out hit);
+        transform.rotation = getUpRotation(transform , hit);
+        followCam.rotation = getUpRotation(followCam , hit);
 
-        Debug.DrawLine(transform.position, hit1.point, Color.green);
-        Debug.DrawLine(hit1.point , hit1.normal , Color.red);
+        Debug.DrawLine(transform.position, hit.point, Color.green);
+        Debug.DrawLine(hit.point , hit.normal , Color.red);
+    }
+
+    void LateUpdate () {
+        followCam.position = transform.position;
+    }
+
+    Quaternion getUpRotation (Transform position, RaycastHit floor) {
+        return Quaternion.FromToRotation(position.up , floor.normal) * position.rotation;
     }
 }
